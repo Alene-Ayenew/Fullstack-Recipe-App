@@ -3,9 +3,10 @@ import "dotenv/config";
 
 import { ENV } from "./config/env.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
-
+import job from "./config/cron.js";
 const app = express();
 const PORT = ENV.PORT || 5000;
+if (ENV.NODE_ENV==="production") job.start()
 
 // Middleware
 app.use(express.json());
