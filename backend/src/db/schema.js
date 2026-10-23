@@ -1,4 +1,11 @@
-import { pgTable, serial, text, timestamp, integer } from "drizzle-orm/pg-core";
+
+import {
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const favoriteTable = pgTable("favorites", {
   id: serial("id").primaryKey(),
@@ -6,7 +13,7 @@ export const favoriteTable = pgTable("favorites", {
   recipeId: integer("recipe_id").notNull(),
   title: text("title").notNull(),
   image: text("image"),
-  cookTime: integer("cook_time"),
+  cookTime: text("cook_time"),
   servings: integer("servings"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
