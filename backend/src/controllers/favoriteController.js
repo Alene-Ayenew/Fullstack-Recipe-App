@@ -41,8 +41,8 @@ export const removeFavorite = async (req, res) => {
       .where(
         and(
           eq(favoriteTable.userId, parseInt(userId, 10)),
-          eq(favoriteTable.recipeId, parseInt(recipeId, 10))
-        )
+          eq(favoriteTable.recipeId, parseInt(recipeId, 10)),
+        ),
       );
 
     return res.status(200).json({
@@ -54,5 +54,19 @@ export const removeFavorite = async (req, res) => {
     return res.status(500).json({
       error: "Something went wrong!",
     });
+  }
+};
+//  getting user favorite
+export const userFavorite = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    await db
+      .select()
+      .from(favoriteTable)
+      .where(eq(favoriteTable.userId, userId));
+    res.status(200).json({ message: "user favorites" });
+  } catch (error) {
+    console.log("error fetching favorites", error);
+    res.status(500).json({ error: "something went wrong" });
   }
 };
