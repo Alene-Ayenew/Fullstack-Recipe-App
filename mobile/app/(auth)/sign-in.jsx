@@ -5,19 +5,20 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Image,
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import { useSignIn } from "@clerk/expo";
+import { useSignIn } from "@clerk/expo/legacy";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 const SignInScreen = () => {
   const router = useRouter();
-  const { signIn, setActive, isLoading } = useSignIn();
+  const { signIn, setActive, isLoaded } = useSignIn();
+  if (!isLoaded) return;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +38,10 @@ const SignInScreen = () => {
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
       } else {
-        Alert.alert("Error", "Sign in failed, please try again");
+        Alert.alert(
+          "Error",
+          `Sign in not complete (status: ${signInAttempt.status})`,
+        );
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (error) {
