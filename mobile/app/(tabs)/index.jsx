@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -6,6 +5,7 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,6 +14,7 @@ import { MealAPI } from "../../services/mealAPI";
 import { homeStyles } from "../../assets/styles/home.styles";
 import { COLORS } from "../../constants/colors";
 import CategoryFilter from "../../components/CategoryFilter";
+import RecipeCard from "../../components/RecipeCard";
 
 const HomeScreen = () => {
   const router = useRouter();
@@ -29,21 +30,18 @@ const HomeScreen = () => {
     try {
       setLoading(true);
 
-      const [apiCategories, randomMeals, featuredMeal] =
-        await Promise.all([
-          MealAPI.getCategories(),
-          MealAPI.getRandomMeals(12),
-          MealAPI.getRandomMeal(),
-        ]);
+      const [apiCategories, randomMeals, featuredMeal] = await Promise.all([
+        MealAPI.getCategories(),
+        MealAPI.getRandomMeals(12),
+        MealAPI.getRandomMeal(),
+      ]);
 
-      const transformedCategories = apiCategories.map(
-        (cat, index) => ({
-          id: index + 1,
-          name: cat.strCategory,
-          image: cat.strCategoryThumb,
-          description: cat.strCategoryDescription,
-        })
-      );
+      const transformedCategories = apiCategories.map((cat, index) => ({
+        id: index + 1,
+        name: cat.strCategory,
+        image: cat.strCategoryThumb,
+        description: cat.strCategoryDescription,
+      }));
 
       setCategories(transformedCategories);
 
@@ -53,8 +51,7 @@ const HomeScreen = () => {
 
       setRecipes(transformedMeals);
 
-      const transformedFeatured =
-        MealAPI.transformMealData(featuredMeal);
+      const transformedFeatured = MealAPI.transformMealData(featuredMeal);
 
       setFeaturedRecipe(transformedFeatured);
     } catch (error) {
@@ -140,9 +137,7 @@ const HomeScreen = () => {
             <TouchableOpacity
               style={homeStyles.featuredCard}
               activeOpacity={0.9}
-              onPress={() =>
-                router.push(`/recipe/${featuredRecipe.id}`)
-              }
+              onPress={() => router.push(`/recipe/${featuredRecipe.id}`)}
             >
               <View style={homeStyles.featuredImageContainer}>
                 <Image
@@ -154,16 +149,11 @@ const HomeScreen = () => {
 
                 <View style={homeStyles.featuredOverlay}>
                   <View style={homeStyles.featuredBadge}>
-                    <Text style={homeStyles.featuredBadgeText}>
-                      Featured
-                    </Text>
+                    <Text style={homeStyles.featuredBadgeText}>Featured</Text>
                   </View>
 
                   <View style={homeStyles.featuredContent}>
-                    <Text
-                      style={homeStyles.featuredTitle}
-                      numberOfLines={2}
-                    >
+                    <Text style={homeStyles.featuredTitle} numberOfLines={2}>
                       {featuredRecipe.title}
                     </Text>
 
@@ -208,15 +198,44 @@ const HomeScreen = () => {
               </View>
             </TouchableOpacity>
           </View>
-        )} 
+        )}
         {/* categories */}
-        <CategoryFilter
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={handleCategorySelect}
-        
-        
-        />
+        {categories.length > 0 && (
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleCategorySelect}
+          />
+        )}
+        <View style={homeStyles.recipesSection}>
+          <View style={homeStyles.sectionHeader}>
+            <Text style={homeStyles.sectionTitle}> {selectedCategory}</Text>
+          </View>
+          {recipes.length > 0 ? (
+            <FlatList
+              data={recipes}
+              renderItem={({ item }) => <RecipeCard recipe={item} />}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={2}
+              columnWrapperStyle={homeStyles.row}
+              contentContainerStyle={homeStyles.recipesGrid}
+              scrollEnabled={false}
+              // ListEmptyComponent={}
+            />
+          ) : (
+            <View style={homeStyles.emptyState}>
+              <Ionicons
+                name="restaurant-outline"
+                size={64}
+                color={COLORS.textLight}
+              />
+              <Text style={homeStyles.emptyTitle}>No recipes found</Text>
+              <Text style={homeStyles.emptyDescription}>
+                Try a different category
+              </Text>
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
