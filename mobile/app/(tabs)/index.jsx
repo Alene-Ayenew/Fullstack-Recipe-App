@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { MealAPI } from "../../services/mealAPI";
 import { homeStyles } from "../../assets/styles/home.styles";
 import { COLORS } from "../../constants/colors";
+import CategoryFilter from "../../components/CategoryFilter";
 
 const HomeScreen = () => {
   const router = useRouter();
@@ -207,7 +208,15 @@ const HomeScreen = () => {
               </View>
             </TouchableOpacity>
           </View>
-        )}
+        )} 
+        {/* categories */}
+        <CategoryFilter
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSelectCategory={handleCategorySelect}
+        
+        
+        />
       </ScrollView>
     </View>
   );
