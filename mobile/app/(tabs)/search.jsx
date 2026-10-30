@@ -116,7 +116,7 @@ const SearchScreen = () => {
           <View style={searchStyles.loadingContainer}>
             <LoadingSpinner message="Searching recipes..." size="small" />
           </View>
-        ) : (
+        ) : (   
           <FlatList
             data={recipes}
             renderItem={({ item }) => <RecipeCard recipe={item} />}
