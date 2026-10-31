@@ -10,6 +10,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
+import { WebView } from "react-native-webview";
 const RecipeDetailScreen = () => {
   const { id: recipeId } = useLocalSearchParams();
   const [recipe, setRecipe] = useState(null);
@@ -201,6 +202,30 @@ const RecipeDetailScreen = () => {
               </View>
             </View>
           </View>
+
+          {recipe.youtubeUrl && (
+            <View style={recipeDetailStyles.sectionContainer}>
+              <View style={recipeDetailStyles.sectionTitleRow}>
+                <LinearGradient
+                  colors={["#FF0000", "#CC0000"]}
+                  style={recipeDetailStyles.sectionIcon}
+                >
+                  <Ionicons name="play" size={16} color={COLORS.white} />
+                </LinearGradient>
+                <Text style={recipeDetailStyles.sectionTitle}>
+                  Video Tutorial{" "}
+                </Text>
+              </View>
+              <View style={recipeDetailStyles.videoCard}>
+                <WebView
+                  style={recipeDetailStyles.webview}
+                  source={{ uri: getYouTubeEmbedUrl(recipe.youtubeUrl) }}
+                  allowsFullscreenVideo
+                  mediaPlaybackRequiresUserAction={false}
+                />
+              </View>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
