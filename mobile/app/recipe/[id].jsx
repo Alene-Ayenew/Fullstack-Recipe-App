@@ -170,6 +170,37 @@ const RecipeDetailScreen = () => {
               </View>
             )}
           </View>
+
+          <View style={recipeDetailStyles.contentSection}>
+            {/* QUICK STATS */}
+            <View style={recipeDetailStyles.statsContainer}>
+              <View style={recipeDetailStyles.statCard}>
+                <LinearGradient
+                  colors={["#FF6B6B", "#FF8E53"]}
+                  style={recipeDetailStyles.statIconContainer}
+                >
+                  <Ionicons name="time" size={20} color={COLORS.white} />
+                </LinearGradient>
+                <Text style={recipeDetailStyles.statValue}>
+                  {recipe.cookTime}
+                </Text>
+                <Text style={recipeDetailStyles.statLabel}>Prep Time</Text>
+              </View>
+
+              <View style={recipeDetailStyles.statCard}>
+                <LinearGradient
+                  colors={["#4ECDC4", "#44A08D"]}
+                  style={recipeDetailStyles.statIconContainer}
+                >
+                  <Ionicons name="people" size={20} color={COLORS.white} />
+                </LinearGradient>
+                <Text style={recipeDetailStyles.statValue}>
+                  {recipe.servings}
+                </Text>
+                <Text style={recipeDetailStyles.statLabel}>Servings</Text>
+              </View>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </View>
