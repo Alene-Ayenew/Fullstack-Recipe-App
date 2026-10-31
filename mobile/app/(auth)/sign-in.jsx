@@ -1,3 +1,4 @@
+
 import {
   View,
   Text,
@@ -8,55 +9,79 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSignIn } from "@clerk/expo/legacy";
+
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+
 const SignInScreen = () => {
   const router = useRouter();
+
   const { signIn, setActive, isLoaded } = useSignIn();
-  if (!isLoaded) return;
+
+  // All hooks must be declared before conditional returns
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert("Please fill in all fields");
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
-    if (!isLoading) return;
+
+    if (!isLoaded || loading) return;
+
     setLoading(true);
+
     try {
       const signInAttempt = await signIn.create({
-        identifier: email,
+        identifier: email.trim(),
         password,
       });
+
       if (signInAttempt.status === "complete") {
-        await setActive({ session: signInAttempt.createdSessionId });
+        await setActive({
+          session: signInAttempt.createdSessionId,
+        });
+
+        router.replace("/");
       } else {
         Alert.alert(
           "Error",
-          `Sign in not complete (status: ${signInAttempt.status})`,
+          `Sign in not complete (status: ${signInAttempt.status})`
         );
+
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (error) {
-      Alert.alert("Error", error.errors?.[0]?.message || "Sign in failed");
+      Alert.alert(
+        "Error",
+        error.errors?.[0]?.message || "Sign in failed"
+      );
+
       console.error(JSON.stringify(error, null, 2));
     } finally {
       setLoading(false);
     }
   };
+
+  if (!isLoaded) {
+    return null;
+  }
+
   return (
     <View style={authStyles.container}>
       <KeyboardAvoidingView
         style={authStyles.keyboardView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS == "ios" ? 64 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle={authStyles.scrollContent}
@@ -69,9 +94,13 @@ const SignInScreen = () => {
               contentFit="contain"
             />
           </View>
+
           <Text style={authStyles.title}>Welcome Back</Text>
-          {/* form container */}
+
+          {/* Form container */}
           <View style={authStyles.formContainer}>
+
+            {/* Email input */}
             <View style={authStyles.inputContainer}>
               <TextInput
                 style={authStyles.textInput}
@@ -81,9 +110,11 @@ const SignInScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
-              ></TextInput>
+                autoCorrect={false}
+              />
             </View>
-            {/* password input */}
+
+            {/* Password input */}
             <View style={authStyles.inputContainer}>
               <TextInput
                 style={authStyles.textInput}
@@ -94,6 +125,7 @@ const SignInScreen = () => {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
+
               <TouchableOpacity
                 style={authStyles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
@@ -105,13 +137,15 @@ const SignInScreen = () => {
                 />
               </TouchableOpacity>
             </View>
+
+            {/* Sign in button */}
             <TouchableOpacity
               style={[
                 authStyles.authButton,
                 loading && authStyles.buttonDisabled,
               ]}
               onPress={handleSignIn}
-              disabled={loading}
+              disabled={loading || !isLoaded}
               activeOpacity={0.8}
             >
               <Text style={authStyles.buttonText}>
@@ -119,6 +153,7 @@ const SignInScreen = () => {
               </Text>
             </TouchableOpacity>
 
+            {/* Sign up navigation */}
             <TouchableOpacity
               style={authStyles.linkContainer}
               onPress={() => router.push("/(auth)/sign-up")}
@@ -128,6 +163,7 @@ const SignInScreen = () => {
                 <Text style={authStyles.link}>Sign up</Text>
               </Text>
             </TouchableOpacity>
+
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -136,3 +172,4 @@ const SignInScreen = () => {
 };
 
 export default SignInScreen;
+
