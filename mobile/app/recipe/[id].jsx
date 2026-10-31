@@ -118,29 +118,58 @@ const RecipeDetailScreen = () => {
               style={recipeDetailStyles.headerImage}
               contentFit="cover"
             />
-            <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
-              style={recipeDetailStyles.gradientOverlay}
-            />
-            <View style={recipeDetailStyles.floatingButtons}>
-              <TouchableOpacity
-                style={recipeDetailStyles.floatingButton}
-                onPress={() => router.back()}
-              >
-                <Ionicons name="arrow-back" size={24} color={COLORS.white} />
-              </TouchableOpacity>
+          </View>
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
+            style={recipeDetailStyles.gradientOverlay}
+          />
+          <View style={recipeDetailStyles.floatingButtons}>
+            <TouchableOpacity
+              style={recipeDetailStyles.floatingButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back" size={24} color={COLORS.white} />
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[recipeDetailStyles.floatingButton, {backgroundColor:isSaving ? COLORS.gray:COLORS.primary},]}
-                onPress={handleToggleSave}
-                disabled={isSaving}
-              >
-                <Ionicons name={isSaving ? "hourglass": isSaved? "bookmark":"bookmarks-outline"} size={24} color={COLORS.white} />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={[
+                recipeDetailStyles.floatingButton,
+                { backgroundColor: isSaving ? COLORS.gray : COLORS.primary },
+              ]}
+              onPress={handleToggleSave}
+              disabled={isSaving}
+            >
+              <Ionicons
+                name={
+                  isSaving
+                    ? "hourglass"
+                    : isSaved
+                      ? "bookmark"
+                      : "bookmarks-outline"
+                }
+                size={24}
+                color={COLORS.white}
+              />
+            </TouchableOpacity>
           </View>
 
-          
+          {/* title section */}
+          <View style={recipeDetailStyles.titleSection}>
+            <View style={recipeDetailStyles.categoryBadge}>
+              <Text style={recipeDetailStyles.categoryText}>
+                {recipe.category}
+              </Text>
+            </View>
+            <Text style={recipeDetailStyles.recipeTitle}>{recipe.title}</Text>
+            {recipe.area && (
+              <View style={recipeDetailStyles.locationRow}>
+                <Ionicons name="location" size={16} color={COLORS.white} />
+                <Text style={recipeDetailStyles.locationText}>
+                  {recipe.area} Cuisine
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>
